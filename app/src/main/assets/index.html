@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>:root{color-scheme:light}body{margin:0}</style>
+<title>Reparto de Apuesta</title>
+<style>
+/* Layout: una sola columna, controles grandes para el pulgar; resultados en dos tarjetas lado a lado que se apilan en pantallas angostas */
+:root {
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --fg: #14202e;
+  --muted: #5d6b7c;
+  --line: #d9e0e8;
+  --gt: #1f7fc4;
+  --gt-soft: #e1f0fb;
+  --ca: #c8283a;
+  --ca-soft: #fbe5e8;
+  --good: #1b8a4b;
+  --bad: #b3261e;
+  --warn-soft: #fff3d6;
+  --warn-fg: #6b4a00;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1722;
+    --surface: #182333;
+    --fg: #e8eef6;
+    --muted: #9aa9bb;
+    --line: #2a3a4e;
+    --gt: #5fb3ee;
+    --gt-soft: #16344d;
+    --ca: #ff6b79;
+    --ca-soft: #4a1f27;
+    --good: #55d189;
+    --bad: #ff8a80;
+    --warn-soft: #3d3112;
+    --warn-fg: #f2d58a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1722;
+  --surface: #182333;
+  --fg: #e8eef6;
+  --muted: #9aa9bb;
+  --line: #2a3a4e;
+  --gt: #5fb3ee;
+  --gt-soft: #16344d;
+  --ca: #ff6b79;
+  --ca-soft: #4a1f27;
+  --good: #55d189;
+  --bad: #ff8a80;
+  --warn-soft: #3d3112;
+  --warn-fg: #f2d58a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  padding-block: 20px 32px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+h1 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 0.95rem; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.field input {
+  width: 100%;
+  font: 600 1.5rem var(--font-display);
+  font-variant-numeric: tabular-nums;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+}
+.field input:focus-visible { outline: 3px solid var(--fg); outline-offset: 1px; }
+#o1 { border-color: var(--gt); }
+#o2 { border-color: var(--ca); }
+.field.wide { grid-column: 1 / -1; }
+.field .prefix { position: relative; }
+.field .prefix span { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font: 600 1.5rem var(--font-display); color: var(--muted); pointer-events: none; }
+.field .prefix input { padding-left: 40px; }
+
+.bets { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bet { border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bet.gt { background: var(--gt-soft); }
+.bet.ca { background: var(--ca-soft); }
+.bet .team { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.bet.gt .team { color: var(--gt); }
+.bet.ca .team { color: var(--ca); }
+.bet .amount { font: 700 1.75rem var(--font-display); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.bet .detail { font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bet .detail b { color: var(--fg); font-weight: 600; }
+
+.outcomes { display: flex; flex-direction: column; }
+.outcomes .line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.outcomes .line:first-child { border-top: 0; padding-top: 0; }
+.outcomes .line:last-child { padding-bottom: 0; }
+.outcomes .k { color: var(--muted); }
+.outcomes .v { font: 600 1.1rem var(--font-display); font-variant-numeric: tabular-nums; text-align: right; }
+.v.good { color: var(--good); }
+.v.bad { color: var(--bad); }
+
+.note { background: var(--warn-soft); color: var(--warn-fg); border-radius: 12px; padding: 12px 14px; font-size: 0.9rem; }
+.msg { color: var(--muted); font-size: 0.95rem; }
+.foot { color: var(--muted); font-size: 0.8rem; }
+@media (max-width: 380px) { .bets { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<main>
+  <header>
+    <h1>Reparto de apuesta</h1>
+    <p class="sub">Apuesta a los dos equipos y deja fuera el empate. Escribe las cuotas de la casa y el monto.</p>
+  </header>
+
+  <section class="panel" aria-label="Datos">
+    <div class="row">
+      <div class="field">
+        <label for="o1">Cuota Guatemala</label>
+        <input id="o1" type="text" inputmode="decimal" autocomplete="off" value="6.66">
+      </div>
+      <div class="field">
+        <label for="o2">Cuota Canadá</label>
+        <input id="o2" type="text" inputmode="decimal" autocomplete="off" value="1.40">
+      </div>
+      <div class="field wide">
+        <label for="total">Total a apostar</label>
+        <div class="prefix"><span>Q</span><input id="total" type="text" inputmode="decimal" autocomplete="off" value="100"></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="msg" id="msg" hidden>Escribe las dos cuotas (por ejemplo 1.40) y el total para ver el reparto.</p>
+
+  <div id="result" style="display:flex;flex-direction:column;gap:16px">
+    <section class="bets" aria-label="Cuánto apostar a cada equipo">
+      <div class="bet gt">
+        <span class="team">Guatemala</span>
+        <span class="amount" id="s1">—</span>
+        <span class="detail">Si gana recibes <b id="p1">—</b></span>
+      </div>
+      <div class="bet ca">
+        <span class="team">Canadá</span>
+        <span class="amount" id="s2">—</span>
+        <span class="detail">Si gana recibes <b id="p2">—</b></span>
+      </div>
+    </section>
+
+    <section class="panel outcomes" aria-label="Resultados posibles">
+      <div class="line"><span class="k">Gana Guatemala o Canadá</span><span class="v" id="gain">—</span></div>
+      <div class="line"><span class="k">Empate</span><span class="v bad" id="draw">—</span></div>
+      <div class="line"><span class="k">Probabilidad máxima de empate para que convenga</span><span class="v" id="be">—</span></div>
+    </section>
+
+    <div class="note" id="note" hidden></div>
+  </div>
+
+  <p class="foot">Los montos se reparten para que ganes lo mismo gane quien gane. Ningún cálculo garantiza el resultado: apuesta solo lo que estés dispuesto a perder.</p>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function num(v) {
+    var n = parseFloat(String(v).replace(",", ".").replace(/[^0-9.]/g, ""));
+    return isFinite(n) ? n : NaN;
+  }
+  function q(n) {
+    return "Q" + n.toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function calc() {
+    var o1 = num($("o1").value), o2 = num($("o2").value), t = num($("total").value);
+    var ok = o1 > 1 && o2 > 1 && t > 0;
+    $("result").hidden = !ok;
+    $("result").style.display = ok ? "flex" : "none";
+    $("msg").hidden = ok;
+    if (!ok) return;
+
+    var inv = 1 / o1 + 1 / o2;
+    var s1 = t * (1 / o1) / inv;
+    var s2 = t - s1;
+    var payout = t / inv;
+    var gain = payout - t;
+
+    $("s1").textContent = q(s1);
+    $("s2").textContent = q(s2);
+    $("p1").textContent = q(s1 * o1);
+    $("p2").textContent = q(s2 * o2);
+
+    var g = $("gain");
+    g.textContent = (gain >= 0 ? "+" : "−") + q(Math.abs(gain));
+    g.className = "v " + (gain >= 0 ? "good" : "bad");
+    $("draw").textContent = "−" + q(t);
+
+    var note = $("note");
+    if (gain > 0) {
+      var be = gain / (gain + t);
+      $("be").textContent = (be * 100).toFixed(1) + "%";
+      note.hidden = false;
+      note.textContent = "Si el empate pasa más seguido que " + (be * 100).toFixed(1) + "% de las veces, esta jugada pierde dinero a largo plazo.";
+    } else {
+      $("be").textContent = "—";
+      note.hidden = false;
+      note.textContent = "Con estas cuotas ganes lo que ganes recibes menos de lo que apostaste. Revisa que las cuotas estén bien escritas.";
+    }
+  }
+  ["o1", "o2", "total"].forEach(function (id) { $(id).addEventListener("input", calc); });
+  calc();
+})();
+</script>
+
+</body>
+</html>
