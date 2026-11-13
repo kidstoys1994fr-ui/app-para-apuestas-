@@ -1,4 +1,4 @@
-# Reparto de Apuesta
+# chupalooo
 
 App Android sencilla. Escribes la cuota de dos equipos y el total a apostar, y te dice cuánto poner en cada uno (sin el empate) para ganar lo mismo gane quien gane. Funciona sin internet.
 
@@ -7,7 +7,7 @@ App Android sencilla. Escribes la cuota de dos equipos y el total a apostar, y t
 1. Crea un repositorio nuevo en GitHub y sube todos los archivos de esta carpeta (incluida la carpeta oculta `.github`).
 2. Entra a la pestaña **Actions** del repositorio. Si te pide permiso para activar los workflows, acéptalo.
 3. Abre la ejecución **Compilar APK**. Si no arrancó sola, usa **Run workflow**.
-4. Cuando termine (unos 3 a 5 minutos), baja a **Artifacts** y descarga **RepartoApuesta-apk**. Es un ZIP que contiene `app-debug.apk`.
+4. Cuando termine (unos 3 a 5 minutos), baja a **Artifacts** y descarga **chupalooo-apk**. Es un ZIP que contiene `app-debug.apk`.
 5. Pasa el APK al celular y ábrelo. Android pedirá permiso para instalar apps de fuentes desconocidas.
 
 ## Estructura
