@@ -133,11 +133,19 @@ h1 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.15; mar
   <section class="panel" aria-label="Datos">
     <div class="row">
       <div class="field">
-        <label for="o1">Cuota Guatemala</label>
+        <label for="team1">Nombre del equipo 1</label>
+        <input id="team1" type="text" autocomplete="off" maxlength="30" value="Guatemala">
+      </div>
+      <div class="field">
+        <label for="team2">Nombre del equipo 2</label>
+        <input id="team2" type="text" autocomplete="off" maxlength="30" value="Canadá">
+      </div>
+      <div class="field">
+        <label for="o1">Cuota equipo 1</label>
         <input id="o1" type="text" inputmode="decimal" autocomplete="off" value="6.66">
       </div>
       <div class="field">
-        <label for="o2">Cuota Canadá</label>
+        <label for="o2">Cuota equipo 2</label>
         <input id="o2" type="text" inputmode="decimal" autocomplete="off" value="1.40">
       </div>
       <div class="field wide">
@@ -152,19 +160,19 @@ h1 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.15; mar
   <div id="result" style="display:flex;flex-direction:column;gap:16px">
     <section class="bets" aria-label="Cuánto apostar a cada equipo">
       <div class="bet gt">
-        <span class="team">Guatemala</span>
+        <span class="team" id="name1">Guatemala</span>
         <span class="amount" id="s1">—</span>
         <span class="detail">Si gana recibes <b id="p1">—</b></span>
       </div>
       <div class="bet ca">
-        <span class="team">Canadá</span>
+        <span class="team" id="name2">Canadá</span>
         <span class="amount" id="s2">—</span>
         <span class="detail">Si gana recibes <b id="p2">—</b></span>
       </div>
     </section>
 
     <section class="panel outcomes" aria-label="Resultados posibles">
-      <div class="line"><span class="k">Gana Guatemala o Canadá</span><span class="v" id="gain">—</span></div>
+      <div class="line"><span class="k" id="winnerLabel">Gana uno de los equipos</span><span class="v" id="gain">—</span></div>
       <div class="line"><span class="k">Empate</span><span class="v bad" id="draw">—</span></div>
       <div class="line"><span class="k">Probabilidad máxima de empate para que convenga</span><span class="v" id="be">—</span></div>
     </section>
@@ -186,6 +194,11 @@ h1 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.15; mar
     return "Q" + n.toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
   function calc() {
+    var team1 = $("team1").value.trim() || "Equipo 1";
+    var team2 = $("team2").value.trim() || "Equipo 2";
+    $("name1").textContent = team1;
+    $("name2").textContent = team2;
+    $("winnerLabel").textContent = "Gana " + team1 + " o " + team2;
     var o1 = num($("o1").value), o2 = num($("o2").value), t = num($("total").value);
     var ok = o1 > 1 && o2 > 1 && t > 0;
     $("result").hidden = !ok;
@@ -221,7 +234,7 @@ h1 { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.15; mar
       note.textContent = "Con estas cuotas ganes lo que ganes recibes menos de lo que apostaste. Revisa que las cuotas estén bien escritas.";
     }
   }
-  ["o1", "o2", "total"].forEach(function (id) { $(id).addEventListener("input", calc); });
+  ["team1", "team2", "o1", "o2", "total"].forEach(function (id) { $(id).addEventListener("input", calc); });
   calc();
 })();
 </script>
